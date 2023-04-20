@@ -1,1 +1,1 @@
-from eiaWeekly.eq import eiaQuery
+from eiaWeekly.eq import EiaQuery
