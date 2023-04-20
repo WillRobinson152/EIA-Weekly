@@ -1,0 +1,1 @@
+from eiaWeekly.eq import eiaQuery
