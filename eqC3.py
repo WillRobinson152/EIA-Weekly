@@ -1,3 +1,15 @@
+"""A module to retrieve propane data from the Energy Information Administration API v2.
+
+The module is used to retrieve historical propane data relevant to the Weekly
+Petroleum Status Report. Data include exports, imports, days of supply, 
+production, product supplied, and national and regional inventory levels. 
+
+Typical usage example:
+
+  propane = Propane('your_api_key')
+  df = propane.finalDf()
+"""
+
 from datetime import date
 from dateutil.relativedelta import relativedelta
 import pandas as pd
@@ -5,11 +17,28 @@ import pandas as pd
 from eq import EiaQuery
 
 class Propane(EiaQuery):
+    """
+    Retrieves propane data from the EIA API v2. 
+    
+    API documentation available at: https://www.eia.gov/opendata/index.php.
+    User must have an API key.
+
+    Attributes:
+        key: API key provided at initialization of class.
+        sub1: String of first element in url after API key ('petroleum').
+        sub2: String of second element in url after API key ('sum/sndw').
+        freq: String of data frequency ('weekly').
+        facets: Dictionary of facet categories and codes relevant to propane.
+    """
     def __init__(self, apiKey):
         super().__init__(apiKey)
         self.sub1 = 'petroleum'
         self.sub2 = 'sum/sndw'
         self.freq = 'weekly'
+        """
+        *** Stock data for 2020 and on; historical data have other series codes
+        and include propylene.
+        """
         self.facets = {"series": [
             # US imports
             "WPRIM_NUS-Z00_2",
@@ -67,6 +96,19 @@ class Propane(EiaQuery):
         return df
     
     def shiftedDf(self, df):
+        """
+        Creates 52-row DataFrame with week_ago, year_ago, and two_years_ago columns.
+
+        Sorts df by date, creates columns of value shifted 1 week, 52 weeks and 
+        104 weeks with column names 'week_ago', 'year_ago', and 'two_years_ago'. 
+        Drops nulls. Resets index. Converts floats to ints. Reorders columns.
+
+        Args:
+            df: A subset of cleanedDf as a Pandas DataFrame.
+
+        Returns:
+            A Pandas DataFrame.
+        """
         shifted = df.copy()
         # sort by date
         shifted.sort_values('date', inplace=True)
@@ -83,6 +125,17 @@ class Propane(EiaQuery):
                         'year_ago', 'two_years_ago', 'units']]
     
     def finalDf(self):
+        """
+        Generates DataFrame of all EIA weekly propane data with current, week_ago,
+        year_ago, and two_years_ago values.
+
+        Creates instance of EiaQuery with query parameters for propane to retrieve
+        data from EIA API. Cleans data. Shifts data to create columns of historical
+        values. Returns Pandas DataFrame.
+
+        Returns:
+            A Pandas DataFrame.
+        """
         df = self.cleanDf()
         dfs = [
             self.shiftedDf(df.copy().loc[df.process=='Exports']),
