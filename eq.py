@@ -23,7 +23,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 class EiaQuery:
-    """"
+    """
     Retrieves data from the EIA API v2. 
     
     API documentation available at: https://www.eia.gov/opendata/index.php.
@@ -54,7 +54,8 @@ class EiaQuery:
               start=str(date.today() - relativedelta(years=3)),
               end=None
               ):
-        """Fetches data from EIA API and returns Pandas DataFrame.
+        """
+        Fetches data from EIA API and returns Pandas DataFrame.
 
         Creates url based on sub1, sub2, frequency, facets and start and end 
         date parameters. Sends get request to url with class's API key. Returns
@@ -64,10 +65,12 @@ class EiaQuery:
             sub1: String of first element in url after API key.
             sub2: String of second element in url after API key. For some requests,
             this element will have mutliple words separated by '/'.
-            freq: String allowed by EIA (example: 'Weekly').
+            freq: String allowed by EIA (example: 'weekly').
             facets: Dictionary with facet categories allowed by EIA ('Product' or 
             'Series', for example) as keys and lists of EIA codes for each category
             as values.
+            start: String of date in YYYY-MM-DD, YYYY-MM or YYYY format.
+            end: String of date in YYYY-MM-DD, YYYY-MM or YYYY format.
 
         Returns:
             A Pandas DataFrame with date values set to datetime.date.
