@@ -74,11 +74,10 @@ class Table9():
         df2 = df.copy()
         df2['category'] = \
         df2.category.replace(dict(zip(
-            ['East Coast (PADD 1)', 'Midwest (PADD 2)', 'Gulf Coast (PADD 3)', 'Propane/Propylene', "PADD's 4 & 5 "],
-            ['PADD 1', 'PADD 2', 'PADD 3', 'U.S.', 'PADDs 4 and 5'])))
+            ['Propane/Propylene', "PADD's 4 & 5 "],
+            ['U.S.', 'PADDs 4 and 5'])))
         for col in df2.columns[2:]:
             df2[col] = df2[col].mul(multiplier)
-            # .astype('int')
         df2['commodity'] = self.date
         df2.rename(columns={'commodity':'date', 'category':'region'}, inplace=True)
         return df2.reset_index(drop=True)
