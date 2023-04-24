@@ -82,12 +82,10 @@ class Propane(EiaQuery):
         df['area-name'] = [regions[region] if region in regions.keys() else region for region in df['area-name']]
         # rename Stocks and Production in process-name
         df['process-name'] = df['process-name'].replace('Ending Stocks Excluding Propylene at Terminal','Stocks').replace('All Plants','Production')
-        # convert float values to int
-        # df['value'] = df.value.astype('int')
         # convert thousands of barrels to barrels
         df.loc[df.units.isin(['MBBL', 'MBBL/D']), 'value'] = df.loc[df.units.isin(['MBBL', 'MBBL/D']), 'value'].mul(1000)
         # rename units
-        df['units'] = df.units.replace('MBBL', 'bbl').replace('MBBL/D', 'b/d')
+        df['units'] = df.units.replace('MBBL', 'bbl').replace('MBBL/D', 'b/d').replace('DAYS', 'days')
         # rename columns
         df.rename(columns={'period':'date',
                            'area-name':'region',
@@ -121,8 +119,6 @@ class Propane(EiaQuery):
         # drop nulls
         shifted.dropna(inplace=True)
         shifted.reset_index(drop=True, inplace=True)
-        # convert float to int
-        # shifted[['current', 'week_ago', 'year_ago', 'two_years_ago']] = shifted[['current', 'week_ago', 'year_ago', 'two_years_ago']].astype('int')
         return shifted[['date', 'region', 'process', 'current', 'week_ago',
                         'year_ago', 'two_years_ago', 'units']]
     
