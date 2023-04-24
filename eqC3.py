@@ -1,4 +1,5 @@
-"""A module to retrieve propane data from the Energy Information Administration API v2.
+"""
+A module to retrieve propane data from the Energy Information Administration API v2.
 
 The module is used to retrieve historical propane data relevant to the Weekly
 Petroleum Status Report. Data include exports, imports, days of supply, 
@@ -82,7 +83,7 @@ class Propane(EiaQuery):
         # rename Stocks and Production in process-name
         df['process-name'] = df['process-name'].replace('Ending Stocks Excluding Propylene at Terminal','Stocks').replace('All Plants','Production')
         # convert float values to int
-        df['value'] = df.value.astype('int')
+        # df['value'] = df.value.astype('int')
         # convert thousands of barrels to barrels
         df.loc[df.units.isin(['MBBL', 'MBBL/D']), 'value'] = df.loc[df.units.isin(['MBBL', 'MBBL/D']), 'value'].mul(1000)
         # rename units
@@ -91,6 +92,7 @@ class Propane(EiaQuery):
         df.rename(columns={'period':'date',
                            'area-name':'region',
                            'process-name':'process',
+                           'value':'current',
                            },
                   inplace=True)
         return df
@@ -113,15 +115,15 @@ class Propane(EiaQuery):
         # sort by date
         shifted.sort_values('date', inplace=True)
         # create columns with data shifted by 1, 52 and 104 weeks
-        shifted['week_ago'] = shifted.value.shift(1)
-        shifted['year_ago'] = shifted.value.shift(52)
-        shifted['two_years_ago'] = shifted.value.shift(104)
+        shifted['week_ago'] = shifted.current.shift(1)
+        shifted['year_ago'] = shifted.current.shift(52)
+        shifted['two_years_ago'] = shifted.current.shift(104)
         # drop nulls
         shifted.dropna(inplace=True)
         shifted.reset_index(drop=True, inplace=True)
         # convert float to int
-        shifted[['value', 'week_ago', 'year_ago', 'two_years_ago']] = shifted[['value', 'week_ago', 'year_ago', 'two_years_ago']].astype('int')
-        return shifted[['date', 'region', 'process', 'value', 'week_ago',
+        # shifted[['current', 'week_ago', 'year_ago', 'two_years_ago']] = shifted[['current', 'week_ago', 'year_ago', 'two_years_ago']].astype('int')
+        return shifted[['date', 'region', 'process', 'current', 'week_ago',
                         'year_ago', 'two_years_ago', 'units']]
     
     def finalDf(self):
