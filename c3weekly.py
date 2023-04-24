@@ -1,7 +1,11 @@
 import pandas as pd
 
-from eqC3 import Propane
-from tab9 import Table9
+try:
+    from eiaWeekly.eqC3 import Propane
+    from eiaWeekly.tab9 import Table9
+except:
+    from eqC3 import Propane
+    from tab9 import Table9
 
 class PropaneWeekly:
     def __init__(self, apiKey):

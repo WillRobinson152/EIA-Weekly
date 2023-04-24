@@ -15,7 +15,10 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 
-from eq import EiaQuery
+try:
+    from eiaWeekly.eq import EiaQuery
+except:
+    from eq import EiaQuery
 
 class Propane(EiaQuery):
     """
@@ -73,8 +76,8 @@ class Propane(EiaQuery):
                              start, 
                              end)
     
-    def cleanDf(self):
-        df = self.getDf()
+    def cleanDf(self, start=str(date.today() - relativedelta(years=3)), end=None):
+        df = self.getDf(start, end)
         # remove unneeded columns
         df = df.copy()[['period', 'area-name', 'process-name', 'value', 'units']]
         # rename regions in area-name
@@ -122,7 +125,7 @@ class Propane(EiaQuery):
         return shifted[['date', 'region', 'process', 'current', 'week_ago',
                         'year_ago', 'two_years_ago', 'units']]
     
-    def finalDf(self):
+    def finalDf(self, start=str(date.today() - relativedelta(years=3)), end=None):
         """
         Generates DataFrame of all EIA weekly propane data with current, week_ago,
         year_ago, and two_years_ago values.
@@ -134,7 +137,7 @@ class Propane(EiaQuery):
         Returns:
             A Pandas DataFrame.
         """
-        df = self.cleanDf()
+        df = self.cleanDf(start, end)
         dfs = [
             self.shiftedDf(df.copy().loc[df.process=='Exports']),
             self.shiftedDf(df.copy().loc[df.process=='Imports']),
