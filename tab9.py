@@ -33,12 +33,12 @@ class Table9():
             self.url,
             encoding='cp1252',
             na_values='– –',
-            usecols=[0, 1, 2, 3, 4, 5]
+            usecols=[0, 1, 2, 3, 4, 5, 6]
         )
         m, d, y = df.columns[2].split('/')
         self.date = date(year=int(f'20{y}'), month=int(m), day=int(d))
         return df.rename(columns=dict(zip(df.columns, 
-            ['commodity', 'category', 'current', 'week_ago', 'year_ago', 'two_years_ago'])))
+            ['commodity', 'category', 'current', 'week_ago', 'year_ago', 'two_years_ago', 'four_wk_avg'])))
     
     def filterData(self):
         df = self.getData()
@@ -95,4 +95,5 @@ class Table9():
         supplied['process'] = 'Product Supplied'
         supplied['units'] = 'b/d'
         return pd.concat([stocks, production, exports, imports, supplied])\
-            [['date', 'region', 'process', 'current', 'week_ago', 'year_ago', 'two_years_ago', 'units']].reset_index(drop=True)
+            [['date', 'region', 'process', 'current', 'week_ago', 'year_ago', 
+              'two_years_ago', 'four_wk_avg', 'units']].reset_index(drop=True)

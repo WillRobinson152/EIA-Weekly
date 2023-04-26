@@ -35,4 +35,7 @@ class PropaneWeekly:
                 'units': ['days']
             })
             df = pd.concat([df, days_supply]).reset_index(drop=True)
-        return df
+        for process in ['Production', 'Exports', 'Imports', 'Product Supplied']:
+            df.loc[(df.date==df.date.max())&(df.process==process), 'year_ago_4wk'] = \
+                df.loc[(df.date==df.date.min())&(df.process==process)].four_wk_avg.sum()
+        return df.drop_duplicates(subset=['date', 'region', 'process'])

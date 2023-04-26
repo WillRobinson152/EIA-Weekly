@@ -116,14 +116,17 @@ class Propane(EiaQuery):
         # sort by date
         shifted.sort_values('date', inplace=True)
         # create columns with data shifted by 1, 52 and 104 weeks
+        shifted['four_wk_avg'] = shifted.current.rolling(4).mean()
         shifted['week_ago'] = shifted.current.shift(1)
         shifted['year_ago'] = shifted.current.shift(52)
         shifted['two_years_ago'] = shifted.current.shift(104)
+        shifted['year_ago_4wk'] = shifted.four_wk_avg.shift(52)
         # drop nulls
         shifted.dropna(inplace=True)
         shifted.reset_index(drop=True, inplace=True)
         return shifted[['date', 'region', 'process', 'current', 'week_ago',
-                        'year_ago', 'two_years_ago', 'units']]
+                        'year_ago', 'two_years_ago', 'four_wk_avg', 
+                        'year_ago_4wk', 'units']]
     
     def finalDf(self, start=str(date.today() - relativedelta(years=3)), end=None):
         """
