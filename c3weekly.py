@@ -1,4 +1,5 @@
 import pandas as pd
+from dateutil.relativedelta import relativedelta
 
 try:
     from eiaWeekly.eqC3 import Propane
@@ -35,7 +36,10 @@ class PropaneWeekly:
                 'units': ['days']
             })
             df = pd.concat([df, days_supply]).reset_index(drop=True)
+        # print(sorted(df.date.unique())[-53:][0])
         for process in ['Production', 'Exports', 'Imports', 'Product Supplied']:
             df.loc[(df.date==df.date.max())&(df.process==process), 'year_ago_4wk'] = \
-                df.loc[(df.date==df.date.min())&(df.process==process)].four_wk_avg.sum()
-        return df.drop_duplicates(subset=['date', 'region', 'process'])
+                df.loc[(df.date==sorted(df.date.unique())[-53:][0])&(df.process==process)].four_wk_avg.sum()
+        df = df.drop_duplicates(subset=['date', 'region', 'process'])
+        df.date = pd.to_datetime(df.date)
+        return df

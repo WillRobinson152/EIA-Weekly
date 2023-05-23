@@ -122,6 +122,7 @@ class Propane(EiaQuery):
         shifted['two_years_ago'] = shifted.current.shift(104)
         shifted['year_ago_4wk'] = shifted.four_wk_avg.shift(52)
         # drop nulls
+        shifted.two_years_ago.fillna(0, inplace=True)
         shifted.dropna(inplace=True)
         shifted.reset_index(drop=True, inplace=True)
         return shifted[['date', 'region', 'process', 'current', 'week_ago',
